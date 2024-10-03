@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block body %}
+		<!--Main Boby-->
+		{% load static %}
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title">storage Information</h4>
+						<ul class="breadcrumbs">
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="#">storage</a>
+							</li>
+						</ul>
+					</div>
+					<div class="row">
+                        <!--Table with filters and add row option-->
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">storage</h4>
+										<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addstorageModal">
+											<i class="fa fa-plus"></i>
+											Add storage
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									<!-- Modal to add new storage -->
+									<div class="modal fade" id="addstorageModal" tabindex="-1" role="dialog" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header no-bd">
+													<h5 class="modal-title">
+														<span class="fw-bold">Add storage</span>
+														<br>
+														<p class="small">Add a new storage, make sure you fill them all</p>
+													</h5>
+													
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+													<form action="{% url 'addstorage'%}" method="post" class="row g-3 needs-validation">
+														{% csrf_token %}
+														<div class="row">
+															<div class="col-md-6 col-lg-6">
+                                                                <label for="storageid" class="form-label">Storage ID</label>
+                                                                <input name="storageid" type="text" class="form-control" id="storageid" placeholder="storage ID should contains only alphabets and numbers" required>
+                                                                <label for="storagename" class="form-label">Storage Description</label>
+                                                                <input name="storagename" type="text" class="form-control" id="storagename" placeholder="storage Name" required>
+                                                                <label for="storagedimension" class="form-label">Storage Dimension</label>
+                                                                <input name="storagedimension" type="text" class="form-control" id="storagedimension" placeholder="storage Name" required>
+                                                            </div>
+															<div class="col-md-6 col-lg-6">
+                                                                <label for="storagelant">Plant</label>
+                                                                <select name="storageplant" class="form-control" id="storageplant">
+                                                                    <option value="" selected disabled>Select a Plant</option>
+                                                                    {% for p in plt %}
+                                                                        <option value="{{ p.id }}">{{ p.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+																<label for="storagetype">Storage Type</label>
+																<br>
+																<input class="form-radio-input" type="radio" name="storagetype" value="Small" checked="true">Small<br>
+																<input class="form-radio-input" type="radio" name="storagetype" value="Big">Big<br>
+                                                                <input class="form-radio-input" type="radio" name="storagetype" value="Large">Large
+															</div>
+														</div>
+														<div class="modal-footer no-bd">
+															<button type="submit" id="editstorageButton" class="btn btn-primary">Add</button>
+															<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!--End modal-->
+
+									<!-- Modal to update storage -->
+									{% for i in stl%}
+										<div class="modal fade" id="editstorageModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Update storage</span><br>
+															<p class="small">Update the Information</p>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<form action="/updatestorage/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="row">
+																<div class="col-md-6 col-lg-6">
+																	<label for="storageid" class="form-label">storage Code</label>
+																	<input name="storageid" type="text" class="form-control" value="{{i.storage_code}}" id="storageid" placeholder="storage ID should contains only alphabets and numbers" required>
+																	<label for="storagename" class="form-label">storage Name</label>
+																	<input name="storagename" type="text" class="form-control" value="{{i.description}}" id="storagename" placeholder="storage Name" required>
+                                                                    <label for="storagedimension" class="form-label">Storage Dimension</label>
+                                                                    <input name="storagedimension" type="text" class="form-control" value="{{i.dimension}}" id="storagedimension" placeholder="storage Name" required>
+																</div>
+																<div class="col-md-6 col-lg-6">
+																	<label for="storageplant">Plant</label>
+																	<select name="storageplant" value="{{i.Plant}}" class="form-control" id="storageplant">
+																		<option value="" disabled>Select a Plant</option>
+																		{% for p in plt %}
+																			<option value="{{ p.id }}">{{ p.name }}</option>
+																		{% endfor %}
+																	</select>
+																	<label for="storagetype">Storage Type</label>
+																	<br>
+																	<input class="form-radio-input" type="radio" name="storagetype" value="Small" checked="true">Small<br>
+																    <input class="form-radio-input" type="radio" name="storagetype" value="Big">Big<br>
+                                                                    <input class="form-radio-input" type="radio" name="storagetype" value="Large">Large
+																</div>
+															</div>
+															<div class="modal-footer no-bd">
+																<button type="submit" id="addstorageButton" class="btn btn-primary">Save</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<!-- Modal to delete storage -->
+									{% for i in stl%}
+										<div class="modal fade" id="deletestorageModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Delete storage</span>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<p class="small">Do you really want to delete this storage record</p>
+														<p class="small">The {{i.description}} will get deleted permanently</p>
+														<form action="/deletestorage/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="modal-footer no-bd">
+																<button type="submit" id="deletestorageButton" class="btn btn-primary">Delete</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<!--table structure-->
+									<div class="table-responsive">
+										<table id="storage" class="display table table-striped table-hover" >
+											<thead>
+												<tr>
+													<th>Storage Code</th>
+													<th>Storage Name</th>
+													<th>Storage Plant</th>
+													<th>Storge Type</th>
+                                                    <th>Storge Dimension</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<thead>
+												<tr>
+													<th>Storage Code</th>
+													<th>Storage Name</th>
+													<th>Storage Plant</th>
+													<th>Storge Type</th>
+                                                    <th>Storge Dimension</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for storage in stl %}
+													<tr>
+														<td>{{ storage.storage_code }}</td>
+														<td>{{ storage.description }}</td>
+														<td>{{ storage.plant }}</td>
+														<td>{{ storage.storage_type }}</td>
+														<td>{{ storage.dimension }}</td>
+														<td>
+															<div class="form-button-action">
+																<button type="button" data-toggle="modal" href="#editstorageModal-{{forloop.counter}}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit storage">
+																	<i class="fa fa-edit"></i>
+																</button>
+																<button type="button" data-toggle="modal" href="#deletestorageModal-{{forloop.counter}}" class="btn btn-link btn-danger" data-original-title="Remove storage">
+																	<i class="fa fa-times"></i>
+																</button>
+															</div>
+														</td>
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+									<!--End table structure-->
+
+								</div>
+							</div>
+						</div>
+                        <!--End table-->
+					</div>
+				</div>
+			</div>
+		</div>
+	<!--End Main Body-->
+    </div>
+{% endblock %}
+
+{% block script%}
+
+	<script>
+		$(document).ready(function() {
+			$('#storage').DataTable( 
+				{
+				"pageLength": 5,
+				initComplete: function () 
+				{
+					this.api().columns().every( function () 
+					{
+						var column = this;
+						var select = $('<select class="form-control"><option value=""></option></select>')
+						.appendTo( $(column.header()).empty() )
+						.on('change', function () 
+						{
+							var val = $.fn.dataTable.util.escapeRegex($(this).val());
+							column.search( val ? '^'+val+'$' : '', true, false ).draw();
+						});
+
+						column.data().unique().sort().each( function ( d, j )
+						{
+							select.append('<option value="'+d+'">'+d+'</option>')
+						});
+					} );
+				}
+			});
+		});
+	</script>
+{% endblock %}

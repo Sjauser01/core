@@ -35,4 +35,38 @@ urlpatterns = [
     path('updateemployee/<str:id>',views.updateemployee, name="updateemployee"),
     path('deleteemployee/<str:id>',views.deleteemployee, name="deleteemployee"),
 
+    path('classification/',views.classification, name="classification"),
+    path('addclassification/',views.addclassification, name="addclassification"),
+    path('editclassification/',views.editclassification, name="editclassification"),
+    path('updateclassification/<str:id>',views.updateclassification, name="updateclassification"),
+    path('deleteclassification/<str:id>',views.deleteclassification, name="deleteclassification"),
+
+    path('suffix/',views.suffix, name="suffix"),
+    path('addsuffix/',views.addsuffix, name="addsuffix"),
+    path('editsuffix/',views.editsuffix, name="editsuffix"),
+    path('updatesuffix/<str:id>',views.updatesuffix, name="updatesuffix"),
+    path('deletesuffix/<str:id>',views.deletesuffix, name="deletesuffix"),
+
+    path('prefix/',views.prefix, name="prefix"),
+    path('addprefix/',views.addprefix, name="addprefix"),
+    path('editprefix/',views.editprefix, name="editprefix"),
+    path('updateprefix/<str:id>',views.updateprefix, name="updateprefix"),
+    path('deleteprefix/<str:id>',views.deleteprefix, name="deleteprefix"),
+
+    path('setup/',views.setup, name="setup"),
+    path('addsetup/',views.addsetup, name="addsetup"),
+    path('save-form-data/', views.save_form_data, name='save_form_data'),
+
+    path('plant/',views.plant, name="plant"),
+    path('addplant/',views.addplant, name="addplant"),
+    path('editplant/',views.editplant, name="editplant"),
+    path('updateplant/<str:id>',views.updateplant, name="updateplant"),
+    path('deleteplant/<str:id>',views.deleteplant, name="deleteplant"),
+
+    path('storage/',views.storage, name="storage"),
+    path('addstorage/',views.addstorage, name="addstorage"),
+    path('editstorage/',views.editstorage, name="editstorage"),
+    path('updatestorage/<str:id>',views.updatestorage, name="updatestorage"),
+    path('deletestorage/<str:id>',views.deletestorage, name="deletestorage"),
+
 ]

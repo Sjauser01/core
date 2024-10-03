@@ -233,3 +233,263 @@ def updateemployee(request,id):
 def deleteemployee(request,id):
     emp = Employee.objects.filter(id=id).delete()
     return redirect('employee')
+
+"""classification views"""
+#classification
+def classification(request):
+    cls = Classification.objects.all()
+    return render(request,'classification.html',{'cls': cls,})
+
+#add classification
+def addclassification(request):
+    if request.method == 'POST':
+        clsid = request.POST.get('classificationid')
+        clsname = request.POST.get('classificationname')
+        clsstatus = request.POST.get('status')
+        cls = Classification(classification_code=clsid,name=clsname,classification_status=clsstatus)
+        cls.save()
+        return redirect('classification')
+
+#edit the classification
+def editclassification(request):
+    cls = Classification.objects.all()
+    context = {'cls': cls,}
+    return redirect(request,'classification.html',context)
+
+#update classification in the table
+def updateclassification(request,id):
+    if request.method == 'POST':
+        clsid = request.POST.get('classificationid')
+        clsname = request.POST.get('classificationname')
+        clsstatus = request.POST.get('status')
+        cls = Classification(id=id,classification_code=clsid,name=clsname,classification_status=clsstatus)
+        cls.save()
+        return redirect('classification')
+
+#delete classification
+def deleteclassification(request,id):
+    cls = Classification.objects.filter(id=id).delete()
+    return redirect('classification')
+
+"""suffix views"""
+#suffix
+def suffix(request):
+    sfx = Suffix.objects.all()
+    return render(request,'suffix.html',{'sfx': sfx,})
+
+#add suffix
+def addsuffix(request):
+    if request.method == 'POST':
+        sfxid = request.POST.get('suffixid')
+        sfxname = request.POST.get('suffixname')
+        sfxstatus = request.POST.get('status')
+        sfx = Suffix(suffix_code=sfxid,name=sfxname,suffix_status=sfxstatus)
+        sfx.save()
+        return redirect('suffix')
+
+#edit the suffix
+def editsuffix(request):
+    sfx = Suffix.objects.all()
+    context = {'sfx': sfx,}
+    return redirect(request,'suffix.html',context)
+
+#update suffix in the table
+def updatesuffix(request,id):
+    if request.method == 'POST':
+        sfxid = request.POST.get('suffixid')
+        sfxname = request.POST.get('suffixname')
+        sfxstatus = request.POST.get('status')
+        sfx = Suffix(id=id,suffix_code=sfxid,name=sfxname,suffix_status=sfxstatus)
+        sfx.save()
+        return redirect('suffix')
+
+#delete suffix
+def deletesuffix(request,id):
+    sfx = Suffix.objects.filter(id=id).delete()
+    return redirect('suffix')
+
+"""prefix views"""
+#prefix
+def prefix(request):
+    prx = Prefix.objects.all()
+    return render(request,'prefix.html',{'prx': prx,})
+
+#add prefix
+def addprefix(request):
+    if request.method == 'POST':
+        prxid = request.POST.get('prefixid')
+        prxname = request.POST.get('prefixname')
+        prxstatus = request.POST.get('status')
+        prx = Prefix(prefix_code=prxid,name=prxname,prefix_status=prxstatus)
+        prx.save()
+        return redirect('prefix')
+
+#edit the prefix
+def editprefix(request):
+    prx = Prefix.objects.all()
+    context = {'prx': prx,}
+    return redirect(request,'prefix.html',context)
+
+#update prefix in the table
+def updateprefix(request,id):
+    if request.method == 'POST':
+        prxid = request.POST.get('prefixid')
+        prxname = request.POST.get('prefixname')
+        prxstatus = request.POST.get('status')
+        prx = Prefix(id=id,prefix_code=prxid,name=prxname,prefix_status=prxstatus)
+        prx.save()
+        return redirect('prefix')
+
+#delete prefix
+def deleteprefix(request,id):
+    prx = Prefix.objects.filter(id=id).delete()
+    return redirect('prefix')
+
+"""Pre setup views"""
+#setup
+def setup(request):
+    return render(request,'setup.html')
+
+def addsetup(request):
+    if request.method == 'POST':
+        return redirect('setup')
+
+@csrf_exempt
+def save_form_data(request):
+    if request.method == 'POST':
+        # Save Series data (Page 1)
+        series_data = Series(
+            field1=request.POST.get('mainOption1', ''),
+            field2=request.POST.get('mainOption2', ''),
+            # Add fields up to field15
+            field15=request.POST.get('mainOption15', '')
+        )
+        series_data.save()
+
+        # Save CompAndBOM data (Page 2)
+        comp_and_bom_data = CompAndBOM(
+            choice1=request.POST.get('choice1', ''),
+            choice2=request.POST.get('choice2', ''),
+            choice3=request.POST.get('choice3', ''),
+            choice4=request.POST.get('choice4', '')
+        )
+        comp_and_bom_data.save()
+
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+"""plant views"""
+#plant
+def plant(request):
+    plt = Plant.objects.all()
+    loc = Location.objects.all()
+    context = {'loc':loc,'plt': plt}
+    return render(request,'plant.html',context)
+
+#add plant
+def addplant(request):
+    if request.method == 'POST':
+        pltid = request.POST.get('plantid')
+        pltname = request.POST.get('plantname')
+        pltloc_id = request.POST.get('plantlocation')
+        pltstatus = request.POST.get('status')
+
+        # Retrieve all locations for the dropdown
+        loc = Location.objects.all()
+
+        # Check if a plant with the same plant_code already exists
+        if Plant.objects.filter(plant_code=pltid).exists():
+            # Issue a warning message and render the form again with the modal open
+            messages.warning(request, f"Plant Code '{pltid}' already exists. Please choose a different Plant Code.")
+            return render(request, 'plant.html', {'loc': loc, 'show_modal': True})
+
+        # Retrieve the selected location instance
+        try:
+            pltlocation = Location.objects.get(id=pltloc_id)
+        except Location.DoesNotExist:
+            messages.error(request, "Selected location does not exist.")
+            return render(request, 'plant.html', {'loc': loc, 'show_modal': True})
+
+        # Create and save the new plant if no duplicate plant_code is found
+        plt = Plant(plant_code=pltid, name=pltname, location=pltlocation, plant_status=pltstatus)
+        plt.save()
+
+        # Issue a success message and redirect back to the plant list
+        messages.success(request, "Plant added successfully!")
+        return redirect('plant')
+
+    # If the request method is GET, render the form with location options
+    loc = Location.objects.all()  # Pass locations to the template
+    return render(request, 'plant.html', {'loc': loc})
+#edit the plant
+def editplant(request):
+    plt = Plant.objects.all()
+    loc = Location.objects.all()
+    context = {'plt': plt,'loc':loc}
+    return render(request,'plant.html',context)
+
+#update plant in the table
+def updateplant(request,id):
+    if request.method == 'POST':
+        pltid = request.POST.get('plantid')
+        pltname = request.POST.get('plantname')
+        pltloc_id = request.POST.get('plantlocation')
+        pltstatus = request.POST.get('status')
+        # Retrieve the instance
+        pltlocation = Location.objects.get(id=pltloc_id)
+        plt = Plant(id=id,plant_code=pltid,name=pltname,location=pltlocation,plant_status=pltstatus)
+        plt.save()
+        return redirect('plant')
+
+#delete plant
+def deleteplant(request,id):
+    plt = Plant.objects.filter(id=id).delete()
+    return redirect('plant')
+
+"""Storage views"""
+#storage
+def storage(request):
+    stl = Storage.objects.all()
+    plt = Plant.objects.all()
+    context = {'plt':plt,'stl': stl}
+    return render(request,'storage.html',context)
+
+#add storage
+def addstorage(request):
+    if request.method == 'POST':
+        stlid = request.POST.get('storageid')
+        stlname = request.POST.get('storagename')
+        stlplant_id = request.POST.get('storageplant')
+        stltype = request.POST.get('storagetype')
+        stldimension = request.POST.get('storagedimension')
+        # Retrieve the instance
+        stlplant = Plant.objects.get(id=stlplant_id)
+        stl = Storage(storage_code=stlid,description=stlname,plant=stlplant,storage_type=stltype,dimension=stldimension)
+        stl.save()
+        return redirect('storage')
+
+#edit the storage
+def editstorage(request):
+    stl = Storage.objects.all()
+    plt = plant.objects.all()
+    context = {'stl': stl,'plt':plt}
+    return render(request,'storage.html',context)
+
+#update storage in the table
+def updatestorage(request,id):
+    if request.method == 'POST':
+        stlid = request.POST.get('storageid')
+        stlname = request.POST.get('storagename')
+        stlplant_id = request.POST.get('storageplant')
+        stltype = request.POST.get('storagetype')
+        stldimension = request.POST.get('storagedimension')
+        # Retrieve the instance
+        stlplant = Plant.objects.get(id=stlplant_id)
+        stl = Storage(id=id,storage_code=stlid,description=stlname,plant=stlplant,storage_type=stltype,dimension=stldimension)
+        stl.save()
+        return redirect('storage')
+
+#delete storage
+def deletestorage(request,id):
+    stl = Storage.objects.filter(id=id).delete()
+    return redirect('storage')

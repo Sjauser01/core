@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block body %}
+{% load static %}
+<div class="main-panel">
+    <div class="content">
+        <div class="page-inner">
+            <div class="page-header">
+                <h4 class="page-title">Pre Setup</h4>
+                <ul class="breadcrumbs">
+                    <li class="separator">
+                        <i class="flaticon-right-arrow"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="">Setup</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title">Setup</h4>
+                        <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addsetupModal">
+                            Complete Setup
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Modal to add new setup -->
+                    <div class="modal fade" id="addsetupModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header no-bd">
+                                    <h5 class="modal-title">
+                                        <span class="fw-bold">Setup the series</span>
+                                        <p class="small">Complete the setup for series</p>
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+                                    <!-- Page 1: 15 Fields from the original form -->
+                                    <div id="page1" class="page">
+                                        <h2>Select the field type for series</h2>
+                                        <form id="formContainerPage1" method="POST" action="{% url 'save_form_data' %}">
+                                            {% csrf_token %}
+                                            <!-- Fields will be dynamically generated here -->
+                                        </form>
+                                    </div>
+
+                                    <!-- Page 2: Choice Fields --> 
+                                    <div id="page2" class="page">
+                                        <h2>Component & BOM Series</h2>
+                                        <form id="formContainerPage2">
+                                            <div class="field-wrapper" class="form-control" style="padding:5px">
+                                                <label for="choice1">Component Series Start</label>
+                                                <select id="choice1" name="choice1">
+                                                    <option value="Sequential" selected>Sequential</option>
+                                                    <option value="Skip by 1000000">Skip by 1000000</option>
+                                                    <option value="Skip by 2000000">Skip by 2000000</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="field-wrapper" class="form-control" style="padding:5px">
+                                                <label for="choice2">Component Series Type</label>
+                                                <select id="choice2" name="choice2">
+                                                    <option value="Sequential" selected>Sequential</option>
+                                                    <option value="Even">Even</option>
+                                                    <option value="Odd">Odd</option>
+                                                    <option value="Divisible by 5">Divisible by 5</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="field-wrapper" class="form-control" style="padding:5px">
+                                                <label for="choice3">BOM Series Start</label>
+                                                <select id="choice3" name="choice3">
+                                                    <option value="Sequential" selected>Sequential</option>
+                                                    <option value="Skip by 1000000">Skip by 1000000</option>
+                                                    <option value="Skip by 2000000">Skip by 2000000</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="field-wrapper" class="form-control" style="padding:5px">
+                                                <label for="choice4">BOM Series Type</label>
+                                                <select id="choice4" name="choice4">
+                                                    <option value="Sequential" selected>Sequential</option>
+                                                    <option value="Even">Even</option>
+                                                    <option value="Odd">Odd</option>
+                                                    <option value="Divisible by 5">Divisible by 5</option>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer no-bd">
+                                        <button id="nextPage" class="btn btn-primary">Next</button>
+                                        <button id="previousPage" class="btn btn-primary">Previous</button>
+                                        <button type="submit" id="setupButton" class="btn btn-primary" onclick="submitForm()">Add</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancelButton">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock  %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        const numberOfFields = 15;
+        let currentPage = 1;
+    
+        // Function to generate fields dynamically for Page 1
+        function generateFields(numberOfFields) {
+            $('#formContainerPage1').empty(); // Clear any previous fields
+    
+            for (let i = 1; i <= numberOfFields; i++) {
+                let fieldHtml = `
+                    <div class="field-wrapper" id="fieldWrapper${i}" style="padding:5px">
+                        <label for="mainOption${i}">Choose an option (Field ${i}):</label>
+                        <select id="mainOption${i}" name="mainOption${i}">
+                            <option value="default" disabled selected>Select the data type</option>
+                            <option value="uppercase">Uppercase Letters</option>
+                            <option value="lowercase">Lowercase Letters</option>
+                            <option value="numbers">Numbers</option>
+                        </select>
+                    </div>
+                `;
+                $('#formContainerPage1').append(fieldHtml);
+            }
+    
+            // Initially hide all fields except the first one
+            for (let i = 2; i <= numberOfFields; i++) {
+                $(`#fieldWrapper${i}`).hide();
+            }
+    
+            // Show the next field when a valid option is selected
+            $('select[id^=mainOption]').change(function () {
+                let selectedIndex = parseInt($(this).attr('id').replace('mainOption', ''), 10);
+    
+                if ($(this).val() !== 'default' && selectedIndex < numberOfFields) {
+                    $(`#fieldWrapper${selectedIndex + 1}`).show();
+                }
+    
+                // Hide subsequent fields if "default" is selected
+                if ($(this).val() === 'default') {
+                    for (let i = selectedIndex + 1; i <= numberOfFields; i++) {
+                        $(`#fieldWrapper${i}`).hide();
+                        $(`#mainOption${i}`).val('default');
+                    }
+                }
+            });
+        }
+    
+        // Generate the 15 fields for Page 1
+        generateFields(15);
+    
+        // Page navigation
+        function showPage(pageNumber) {
+            if (pageNumber === 1) {
+                $('#page1').show();
+                $('#page2').hide();
+                $('#previousPage').hide();
+                $('#nextPage').show();
+            } else if (pageNumber === 2) {
+                $('#page1').hide();
+                $('#page2').show();
+                $('#previousPage').show();
+                $('#nextPage').hide();
+            }
+        }
+    
+        $('#nextPage').click(function () {
+            currentPage = 2; // Set to Page 2 when "Next" is clicked
+            showPage(currentPage);
+        });
+    
+        $('#previousPage').click(function () {
+            currentPage = 1; // Set to Page 1 when "Previous" is clicked
+            showPage(currentPage);
+        });
+    
+        showPage(1); // Show Page 1 initially
+    
+        // Cancel Button - Clear all fields and reset to Page 1
+        $('#cancelButton').click(function () {
+            // Clear Page 1 fields
+            $('#formContainerPage1').find('select').val('default');
+            generateFields(15); // Re-generate the fields for Page 1
+        
+            // Clear Page 2 fields and reset to default selected options
+            $('#choice1').val('Sequential'); // Reset to the first option (Sequential)
+            $('#choice2').val('Sequential'); // Reset to the first option (Sequential)
+            $('#choice3').val('Sequential'); // Reset to the first option (Sequential)
+            $('#choice4').val('Sequential'); // Reset to the first option (Sequential)
+        
+            // Reset page navigation to Page 1
+            currentPage = 1;  // Reset currentPage to 1 after clearing
+            showPage(currentPage); // Show Page 1 after clearing
+        });
+    
+        // Submit form function
+        function submitForm() {
+            var formData = {};
+    
+            // Collect data from Page 1
+            $('select[id^=mainOption]').each(function (index, element) {
+                let fieldIndex = index + 1;
+                if ($(element).val() !== 'default') {
+                    formData[`mainOption${fieldIndex}`] = $(element).val(); // Collect non-default values
+                }
+            });
+    
+            // Collect data from Page 2
+            formData['choice1'] = $('#choice1').val();
+            formData['choice2'] = $('#choice2').val();
+            formData['choice3'] = $('#choice3').val();
+            formData['choice4'] = $('#choice4').val();
+    
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_form_data' %}",  // Replace with your Django view URL
+                data: formData,
+                success: function (response) {
+                    alert('Form data saved successfully!');
+                    
+                    // After form submission, clear the form and reset the fields
+                    $('#formContainerPage1').find('select').val('default');
+                    generateFields(15); // Re-generate the fields for Page 1
+
+                    // Reset Page 2 fields to default selected options
+                    $('#choice1').val('Sequential'); // Reset to the first option (Sequential)
+                    $('#choice2').val('Sequential'); // Reset to the first option (Sequential)
+                    $('#choice3').val('Sequential'); // Reset to the first option (Sequential)
+                    $('#choice4').val('Sequential'); // Reset to the first option (Sequential)
+    
+                    // Reset page navigation to Page 1
+                    currentPage = 1;  // Reset currentPage to 1 after submission
+                    showPage(currentPage); // Show Page 1 after submission
+                },
+                error: function (response) {
+                    alert('Error occurred while saving form data.');
+                }
+            });
+        }
+    
+        $('#setupButton').click(function (e) {
+            e.preventDefault(); // Prevent default form submission
+            submitForm(); // Trigger form submission
+        });
+    });
+</script>
+{% endblock %}

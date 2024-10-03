@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block body %}
 		<!--Main Boby-->
 		{% load static %}
@@ -6,13 +7,13 @@
 			<div class="content">
 				<div class="page-inner">
 					<div class="page-header">
-						<h4 class="page-title">Location Information</h4>
+						<h4 class="page-title">Classification Information</h4>
 						<ul class="breadcrumbs">
 							<li class="separator">
 								<i class="flaticon-right-arrow"></i>
 							</li>
 							<li class="nav-item">
-								<a href="#">Locations</a>
+								<a href="#">Classification</a>
 							</li>
 						</ul>
 					</div>
@@ -22,23 +23,23 @@
 							<div class="card">
 								<div class="card-header">
 									<div class="d-flex align-items-center">
-										<h4 class="card-title">Locations</h4>
-										<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addlocationModal">
+										<h4 class="card-title">Classification</h4>
+										<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addclassificationModal">
 											<i class="fa fa-plus"></i>
-											Add Location
+											Add Classification
 										</button>
 									</div>
 								</div>
 								<div class="card-body">
-									<!-- Modal to add new location -->
-									<div class="modal fade" id="addlocationModal" tabindex="-1" role="dialog" aria-hidden="true">
+									<!-- Modal to add new classification -->
+									<div class="modal fade" id="addclassificationModal" tabindex="-1" role="dialog" aria-hidden="true">
 										<div class="modal-dialog" role="document">
 											<div class="modal-content">
 												<div class="modal-header no-bd">
 													<h5 class="modal-title">
-														<span class="fw-bold">Add Location</span>
+														<span class="fw-bold">Add Classification</span>
 														<br>
-														<p class="small">Add a new location, make sure you fill them all</p>
+														<p class="small">Add a new Classification, make sure you fill them all</p>
 													</h5>
 													
 													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -46,16 +47,16 @@
 													</button>
 												</div>
 												<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
-													<form action="{% url 'addlocation'%}" method="post" class="row g-3 needs-validation">
+													<form action="{% url 'addclassification'%}" method="post" class="row g-3 needs-validation">
 														{% csrf_token %}
 														<div class="row">
 															<div class="col-md-6 col-lg-4">
-                                                                <label for="locationid" class="form-label">Location ID</label>
-                                                                <input name="locationid" type="text" class="form-control" id="locationid" placeholder="Location ID should contains only alphabets and numbers" required>
+                                                                <label for="classificationid" class="form-label">Classification Code</label>
+                                                                <input name="classificationid" type="text" class="form-control" id="classificationid" placeholder="classification ID should contains only alphabets and numbers" required>
                                                             </div>
                                                             <div class="col-md-6 col-lg-4">
-                                                                <label for="locationname" class="form-label">Location Name</label>
-                                                                <input name="locationname" type="text" class="form-control" id="locationname" placeholder="Location Name" required>
+                                                                <label for="classificationname" class="form-label">Classification Name</label>
+                                                                <input name="classificationname" type="text" class="form-control" id="classificationname" placeholder="classification Name" required>
                                                             </div>
 															<div class="col-md-6 col-lg-4">
 																<label for="status">Status</label>
@@ -65,7 +66,7 @@
 															</div>
 														</div>
 														<div class="modal-footer no-bd">
-															<button type="submit" id="editlocationButton" class="btn btn-primary">Add</button>
+															<button type="submit" id="editclassificationButton" class="btn btn-primary">Add</button>
 															<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 														</div>
 													</form>
@@ -75,14 +76,14 @@
 									</div>
 									<!--End modal-->
 
-									<!-- Modal to update location -->
-									{% for i in loc%}
-										<div class="modal fade" id="editlocationModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+									<!-- Modal to update classification -->
+									{% for i in cls%}
+										<div class="modal fade" id="editclassificationModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content">
 													<div class="modal-header no-bd">
 														<h5 class="modal-title">
-															<span class="fw-bold">Update Location</span><br>
+															<span class="fw-bold">Update Classification</span><br>
 															<p class="small">Update the Information</p>
 														</h5>
 														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -90,16 +91,16 @@
 														</button>
 													</div>
 													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
-														<form action="/updatelocation/{{i.id}}" method="post" class="row g-3 needs-validation">
+														<form action="/updateclassification/{{i.id}}" method="post" class="row g-3 needs-validation">
 															{% csrf_token %}
 															<div class="row">
 																<div class="col-md-6 col-lg-4">
-																	<label for="locationid" class="form-label">Location ID</label>
-																	<input name="locationid" type="text" class="form-control" value="{{i.location_code}}" id="locationid" placeholder="Location ID should contains only alphabets and numbers" required>
+																	<label for="classificationid" class="form-label">Classification Code</label>
+																	<input name="classificationid" type="text" class="form-control" value="{{i.classification_code}}" id="classificationid" placeholder="classification ID should contains only alphabets and numbers" required>
 																</div>
 																<div class="col-md-6 col-lg-4">
-																	<label for="locationname" class="form-label">Location Name</label>
-																	<input name="locationname" type="text" class="form-control" value="{{i.name}}" id="locationname" placeholder="Location Name" required>
+																	<label for="classificationname" class="form-label">Classification Name</label>
+																	<input name="classificationname" type="text" class="form-control" value="{{i.name}}" id="classificationname" placeholder="classification Name" required>
 																</div>
 																<div class="col-md-6 col-lg-4">
 																	<label for="status">Status</label>
@@ -109,7 +110,7 @@
 																</div>
 															</div>
 															<div class="modal-footer no-bd">
-																<button type="submit" id="addlocationButton" class="btn btn-primary">Save</button>
+																<button type="submit" id="addclassificationButton" class="btn btn-primary">Save</button>
 																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 															</div>
 														</form>
@@ -120,26 +121,26 @@
 									{% endfor %}
 									<!--End modal-->
 
-									<!-- Modal to delete location -->
-									{% for i in loc%}
-										<div class="modal fade" id="deletelocationModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+									<!-- Modal to delete classification -->
+									{% for i in cls%}
+										<div class="modal fade" id="deleteclassificationModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content">
 													<div class="modal-header no-bd">
 														<h5 class="modal-title">
-															<span class="fw-bold">Delete Location</span>
+															<span class="fw-bold">Delete Classification</span>
 														</h5>
 														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 															<span aria-hidden="true">&times;</span>
 														</button>
 													</div>
 													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
-														<p class="small">Do you really want to delete this Location record</p>
+														<p class="small">Do you really want to delete this Classification record</p>
 														<p class="small">The {{i.name}} will get deleted permanently</p>
-														<form action="/deletelocation/{{i.id}}" method="post" class="row g-3 needs-validation">
+														<form action="/deleteclassification/{{i.id}}" method="post" class="row g-3 needs-validation">
 															{% csrf_token %}
 															<div class="modal-footer no-bd">
-																<button type="submit" id="deletelocationButton" class="btn btn-primary">Delete</button>
+																<button type="submit" id="deleteclassificationButton" class="btn btn-primary">Delete</button>
 																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 															</div>
 														</form>
@@ -152,35 +153,35 @@
 
 									<!--table structure-->
 									<div class="table-responsive">
-										<table id="location" class="display table table-striped table-hover" >
+										<table id="classification" class="display table table-striped table-hover" >
 											<thead>
 												<tr>
-													<th>Location ID</th>
-													<th>Location Name</th>
+													<th>Classification Code</th>
+													<th>Classification Name</th>
 													<th>Status</th>
-													<th style="width: 10%">Action</th>
+													<th>Action</th>
 												</tr>
 											</thead>
 											<thead>
 												<tr>
-													<th>Location ID</th>
-													<th>Location Name</th>
+													<th>Classification Code</th>
+													<th>Classification Name</th>
 													<th>Status</th>
 													<th>Action</th>
 												</tr>
 											</thead>
 											<tbody>
-												{% for location in loc %}
+												{% for classification in cls %}
 													<tr>
-														<td>{{ location.location_code }}</td>
-														<td>{{ location.name }}</td>
-														<td>{{ location.location_status }}</td>
+														<td>{{ classification.classification_code }}</td>
+														<td>{{ classification.name }}</td>
+														<td>{{ classification.classification_status }}</td>
 														<td>
 															<div class="form-button-action">
-																<button type="button" data-toggle="modal" href="#editlocationModal-{{forloop.counter}}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Location">
+																<button type="button" data-toggle="modal" href="#editclassificationModal-{{forloop.counter}}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit classification">
 																	<i class="fa fa-edit"></i>
 																</button>
-																<button type="button" data-toggle="modal" href="#deletelocationModal-{{forloop.counter}}" class="btn btn-link btn-danger" data-original-title="Remove Location">
+																<button type="button" data-toggle="modal" href="#deleteclassificationModal-{{forloop.counter}}" class="btn btn-link btn-danger" data-original-title="Remove classification">
 																	<i class="fa fa-times"></i>
 																</button>
 															</div>
@@ -208,7 +209,7 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#location').DataTable( 
+			$('#classification').DataTable( 
 				{
 				"pageLength": 5,
 				initComplete: function () 

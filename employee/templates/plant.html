@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block body %}
+		<!--Main Boby-->
+		{% load static %}
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title">plant Information</h4>
+						<ul class="breadcrumbs">
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="#">plant</a>
+							</li>
+						</ul>
+					</div>
+					<div class="row">
+                        <!--Table with filters and add row option-->
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">plant</h4>
+										<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addplantModal">
+											<i class="fa fa-plus"></i>
+											Add plant
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									<!-- Modal to add new plant -->
+									<div class="modal fade" id="addplantModal" tabindex="-1" role="dialog" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header no-bd">
+													<h5 class="modal-title">
+														<span class="fw-bold">Add plant</span>
+														<br>
+														<p class="small">Add a new plant, make sure you fill them all</p>
+													</h5>
+													
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+													<form action="{% url 'addplant'%}" method="post" class="row g-3 needs-validation">
+														{% csrf_token %}
+														<div class="row">
+															<div class="col-md-6 col-lg-6">
+                                                                <label for="plantid" class="form-label">plant Code</label>
+                                                                <input name="plantid" type="text" class="form-control" id="plantid" placeholder="plant ID should contains only alphabets and numbers" required>
+                                                                <label for="plantname" class="form-label">plant Name</label>
+                                                                <input name="plantname" type="text" class="form-control" id="plantname" placeholder="plant Name" required>
+                                                            </div>
+															<div class="col-md-6 col-lg-6">
+																<label for="plantlocation">Location</label>
+																<select name="plantlocation" class="form-control" id="plantlocation" required>
+																	<option value="" selected disabled>Select a Location</option>
+																	{% for l in loc %}
+																		<option value="{{ l.id }}">{{ l.name }}</option>
+																	{% endfor %}
+																</select>
+																<label for="status">Status</label>
+																<br>
+																<input class="form-radio-input" type="radio" name="status" value="Active" required>Active<br>
+																<input class="form-radio-input" type="radio" name="status" value="Inactive" required>Inactive
+															</div>
+														</div>
+														<div class="modal-footer no-bd">
+															<button type="submit" id="editplantButton" class="btn btn-primary">Add</button>
+															<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!--End modal-->
+
+									<!-- Modal to update plant -->
+									{% for i in plt%}
+										<div class="modal fade" id="editplantModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Update plant</span><br>
+															<p class="small">Update the Information</p>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<form action="/updateplant/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="row">
+																<div class="col-md-6 col-lg-6">
+																	<label for="plantid" class="form-label">plant Code</label>
+																	<input name="plantid" type="text" class="form-control" value="{{i.plant_code}}" id="plantid" placeholder="plant ID should contains only alphabets and numbers" required>
+																	<label for="plantname" class="form-label">plant Name</label>
+																	<input name="plantname" type="text" class="form-control" value="{{i.name}}" id="plantname" placeholder="plant Name" required>
+																</div>
+																<div class="col-md-6 col-lg-6">
+																	<label for="plantlocation">Location</label>
+																	<select name="plantlocation" value="{{i.location}}" class="form-control" id="plantlocation" required>
+																		<option value="" disabled>Select a Location</option>
+																		{% for l in loc %}
+																			<option value="{{ l.id }}">{{ l.name }}</option>
+																		{% endfor %}
+																	</select>
+																	<label for="status">Status</label>
+																	<br>
+																	<input class="form-radio-input" type="radio" name="status" value="Active" required>Active<br>
+																	<input class="form-radio-input" type="radio" name="status" value="Inactive" required>Inactive
+																</div>
+															</div>
+															<div class="modal-footer no-bd">
+																<button type="submit" id="addplantButton" class="btn btn-primary">Save</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<!-- Modal to delete plant -->
+									{% for i in plt%}
+										<div class="modal fade" id="deleteplantModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Delete plant</span>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<p class="small">Do you really want to delete this plant record</p>
+														<p class="small">The {{i.name}} will get deleted permanently</p>
+														<form action="/deleteplant/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="modal-footer no-bd">
+																<button type="submit" id="deleteplantButton" class="btn btn-primary">Delete</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<!--table structure-->
+									<div class="table-responsive">
+										<table id="plant" class="display table table-striped table-hover" >
+											<thead>
+												<tr>
+													<th>plant Code</th>
+													<th>plant Name</th>
+													<th>plant Location</th>
+													<th>Status</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<thead>
+												<tr>
+													<th>plant Code</th>
+													<th>plant Name</th>
+													<th>plant Location</th>
+													<th>Status</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for plant in plt %}
+													<tr>
+														<td>{{ plant.plant_code }}</td>
+														<td>{{ plant.name }}</td>
+														<td>{{ plant.location }}</td>
+														<td>{{ plant.plant_status }}</td>
+														<td>
+															<div class="form-button-action">
+																<button type="button" data-toggle="modal" href="#editplantModal-{{forloop.counter}}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit plant">
+																	<i class="fa fa-edit"></i>
+																</button>
+																<button type="button" data-toggle="modal" href="#deleteplantModal-{{forloop.counter}}" class="btn btn-link btn-danger" data-original-title="Remove plant">
+																	<i class="fa fa-times"></i>
+																</button>
+															</div>
+														</td>
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+									<!--End table structure-->
+
+								</div>
+							</div>
+						</div>
+                        <!--End table-->
+					</div>
+				</div>
+			</div>
+		</div>
+	<!--End Main Body-->
+    </div>
+{% endblock %}
+
+{% block script%}
+<script>
+	$(document).ready(function() {
+		$('#plant').DataTable({
+			"pageLength": 5,
+			"order": [], // Disable initial sorting to maintain database order
+			initComplete: function () {
+				this.api().columns().every(function () {
+					var column = this;
+					var select = $('<select class="form-control"><option value=""></option></select>')
+						.appendTo($(column.header()).empty())
+						.on('change', function () {
+							var val = $.fn.dataTable.util.escapeRegex($(this).val());
+							column.search(val ? '^'+val+'$' : '', true, false).draw();
+						});
+
+					// Populate the select options with unique values from the column
+					column.data().unique().sort().each(function (d, j) {
+						select.append('<option value="'+d+'">'+d+'</option>');
+					});
+				});
+			}
+		});
+	});
+</script>
+{% endblock %}

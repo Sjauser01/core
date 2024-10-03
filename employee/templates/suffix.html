@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block body %}
+		<!--Main Boby-->
+		{% load static %}
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title">Suffix Information</h4>
+						<ul class="breadcrumbs">
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="#">Suffix</a>
+							</li>
+						</ul>
+					</div>
+					<div class="row">
+                        <!--Table with filters and add row option-->
+						<div class="col-md-12">
+							<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">Suffix</h4>
+										<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addsuffixModal">
+											<i class="fa fa-plus"></i>
+											Add Suffix
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									<!-- Modal to add new suffix -->
+									<div class="modal fade" id="addsuffixModal" tabindex="-1" role="dialog" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header no-bd">
+													<h5 class="modal-title">
+														<span class="fw-bold">Add Suffix</span>
+														<br>
+														<p class="small">Add a new Suffix, make sure you fill them all</p>
+													</h5>
+													
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+													<form action="{% url 'addsuffix'%}" method="post" class="row g-3 needs-validation">
+														{% csrf_token %}
+														<div class="row">
+															<div class="col-md-6 col-lg-4">
+                                                                <label for="suffixid" class="form-label">Suffix Code</label>
+                                                                <input name="suffixid" type="text" class="form-control" id="suffixid" placeholder="Suffix ID should contains only alphabets and numbers" required>
+                                                            </div>
+                                                            <div class="col-md-6 col-lg-4">
+                                                                <label for="suffixname" class="form-label">Suffix Name</label>
+                                                                <input name="suffixname" type="text" class="form-control" id="suffixname" placeholder="Suffix Name" required>
+                                                            </div>
+															<div class="col-md-6 col-lg-4">
+																<label for="status">Status</label>
+																<br>
+																<input class="form-radio-input" type="radio" name="status" value="Active" checked="true">Active<br>
+																<input class="form-radio-input" type="radio" name="status" value="Inactive">Inactive
+															</div>
+														</div>
+														<div class="modal-footer no-bd">
+															<button type="submit" id="editsuffixButton" class="btn btn-primary">Add</button>
+															<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!--End modal-->
+
+									<!-- Modal to update suffix -->
+									{% for i in sfx%}
+										<div class="modal fade" id="editsuffixModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Update Suffix</span><br>
+															<p class="small">Update the Information</p>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<form action="/updatesuffix/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="row">
+																<div class="col-md-6 col-lg-4">
+																	<label for="suffixid" class="form-label">Suffix Code</label>
+																	<input name="suffixid" type="text" class="form-control" value="{{i.suffix_code}}" id="suffixid" placeholder="suffix ID should contains only alphabets and numbers" required>
+																</div>
+																<div class="col-md-6 col-lg-4">
+																	<label for="suffixname" class="form-label">Suffix Name</label>
+																	<input name="suffixname" type="text" class="form-control" value="{{i.name}}" id="suffixname" placeholder="suffix Name" required>
+																</div>
+																<div class="col-md-6 col-lg-4">
+																	<label for="status">Status</label>
+																	<br>
+																	<input class="form-radio-input" type="radio" name="status" value="Active">Active<br>
+																	<input class="form-radio-input" type="radio" name="status" value="Inactive">Inactive
+																</div>
+															</div>
+															<div class="modal-footer no-bd">
+																<button type="submit" id="addsuffixButton" class="btn btn-primary">Save</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<!-- Modal to delete suffix -->
+									{% for i in sfx%}
+										<div class="modal fade" id="deletesuffixModal-{{forloop.counter}}" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header no-bd">
+														<h5 class="modal-title">
+															<span class="fw-bold">Delete Suffix</span>
+														</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body" style="padding-left: 50px; padding-right: 50px;">
+														<p class="small">Do you really want to delete this suffix record</p>
+														<p class="small">The {{i.name}} will get deleted permanently</p>
+														<form action="/deletesuffix/{{i.id}}" method="post" class="row g-3 needs-validation">
+															{% csrf_token %}
+															<div class="modal-footer no-bd">
+																<button type="submit" id="deletesuffixButton" class="btn btn-primary">Delete</button>
+																<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+									<!--End modal-->
+
+									<div class="d-flex align-items-center">
+										<button id="suffixButton" class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#suffixModal">
+											Suffixes
+										</button>
+									</div>
+
+									<!-- Modal for Suffix Table -->
+									<div class="modal fade" id="suffixModal" tabindex="-1" role="dialog" aria-hidden="true">
+										<div class="modal-dialog modal-lg" role="document">
+											<div class="modal-content">
+												<div class="modal-header no-bd">
+													<h5 class="modal-title">
+														<span class="fw-bold">Suffix Records</span>
+													</h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<!-- Table inside modal -->
+													<div class="table-responsive">
+														<table id="suffix" class="display table table-striped table-hover">
+															<thead>
+																<tr>
+																	<th>Suffix Code</th>
+																	<th>Suffix Name</th>
+																	<th>Status</th>
+																	<th>Action</th>
+																</tr>
+															</thead>
+															<thead>
+																<tr>
+																	<th>Suffix Code</th>
+																	<th>Suffix Name</th>
+																	<th>Status</th>
+																	<th>Action</th>
+																</tr>
+															</thead>
+															<tbody>
+																{% for suffix in sfx %}
+																	<tr>
+																		<td>{{ suffix.suffix_code }}</td>
+																		<td>{{ suffix.name }}</td>
+																		<td>{{ suffix.suffix_status }}</td>
+																		<td>
+																			<div class="form-button-action">
+																				<button type="button" data-toggle="modal" href="#editsuffixModal-{{forloop.counter}}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit suffix">
+																					<i class="fa fa-edit"></i>
+																				</button>
+																				<button type="button" data-toggle="modal" href="#deletesuffixModal-{{forloop.counter}}" class="btn btn-link btn-danger" data-original-title="Remove suffix">
+																					<i class="fa fa-times"></i>
+																				</button>
+																			</div>
+																		</td>
+																	</tr>
+																{% endfor %}
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+                        <!--End table-->
+					</div>
+				</div>
+			</div>
+		</div>
+	<!--End Main Body-->
+    </div>
+{% endblock %}
+
+{% block script%}
+<script>
+    $(document).ready(function() {
+        var table = $('#suffix').DataTable({
+            "pageLength": 5,
+            // Disable sorting for the Action column
+            "columnDefs": [
+                { 
+                    "orderable": false, // Disable sorting
+                    "targets": function (colIdx) {
+                        // Find column with header text "Action"
+                        return $(table.column(colIdx).header()).text().trim() === "Action";
+                    }
+                }
+            ],
+            initComplete: function () {
+                var api = this.api();
+
+                // Loop through each column
+                api.columns().every(function() {
+                    var column = this;
+
+                    // Get the header text of the column
+                    var headerText = $(column.header()).text().trim();
+
+                    // Apply filter dropdown only if the header is not "Action"
+                    if (headerText !== "Action") {
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.header()).empty())  // Append filter to header
+                            .on('change', function() {
+                                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                                column.search(val ? '^'+val+'$' : '', true, false).draw();
+                            });
+
+                        // Populate the select with unique values from the column
+                        column.data().unique().sort().each(function(d, j) {
+                            select.append('<option value="'+d+'">'+d+'</option>');
+                        });
+                    } else {
+                        // Clear the header for the "Action" column so no filter is shown
+                        $(column.header()).empty();  // Completely clear the header for the "Action" column
+                    }
+                });
+            }
+        });
+
+        // Trigger modal on button click
+        $('#suffixButton').on('click', function() {
+            $('#suffixModal').modal('show');
+        });
+    });
+</script>    
+{% endblock %}
